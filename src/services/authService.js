@@ -20,17 +20,26 @@ export class AuthService {
   }
 
   static async login({ email, password }) {
-    const user = await User.findOne({ email }).select("+password");
-    if (!user) throw new Error("Invalid credentials");
+  const user = await User.findOne({ email }).select("+password");
+  if (!user) throw new Error("Invalid credentials");
 
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) throw new Error("Invalid credentials");
+  const match = await bcrypt.compare(password, user.password);
+  if (!match) throw new Error("Invalid credentials");
 
-    const token = jwt.sign(
-      { id: user._id, role: user.role, companyId: user.companyId },
-      process.env.JWT_SECRET
-    );
+  const token = jwt.sign(
+    {
+      id: user._id,
+      role: user.role,
+      companyId: user.companyId,
+      name: user.name,      
+      email: user.email,  
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: "7d" }     
+  );
 
-    return { token };
-  }
+  return { token };
 }
+}
+
+
