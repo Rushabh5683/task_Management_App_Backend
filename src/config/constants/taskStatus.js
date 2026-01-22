@@ -1,0 +1,5 @@
+export const TASK_STATUS = {
+  ASSIGNED: "ASSIGNED",
+  IN_PROGRESS: "IN_PROGRESS",
+  DONE: "DONE",
+};
