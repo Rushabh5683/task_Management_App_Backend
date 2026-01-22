@@ -19,8 +19,11 @@ export class AuthService {
     return user;
   }
 
-  static async login({ email, password }) {
-  const user = await User.findOne({ email }).select("+password");
+static async login({ email, password }) {
+  const user = await User.findOne({ email })
+    .select("+password")
+    .populate("companyId", "name");
+
   if (!user) throw new Error("Invalid credentials");
 
   const match = await bcrypt.compare(password, user.password);
@@ -30,16 +33,18 @@ export class AuthService {
     {
       id: user._id,
       role: user.role,
-      companyId: user.companyId,
-      name: user.name,      
-      email: user.email,  
+      companyId: user.companyId._id,
+      companyName: user.companyId.name, // ✅ ADD THIS
+      name: user.name,
+      email: user.email,
     },
     process.env.JWT_SECRET,
-    { expiresIn: "7d" }     
+    { expiresIn: "7d" }
   );
 
   return { token };
 }
+
 }
 
 
